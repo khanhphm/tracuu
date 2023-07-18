@@ -1,56 +1,18 @@
 <template>
   <div class="mt-12">
-    <v-form v-if="view" v-model="form" @submit.prevent="onSubmit">
-      <v-card
-        class="mx-auto pa-12 pb-8"
-        elevation="8"
-        width="80%"
-        max-width="440px"
-        rounded="lg"
-      >
-        <v-text-field
-          color="success"
-          append-inner-icon="mdi-reload"
-          density="compact"
-          label="Mã xác nhận"
-          prepend-inner-icon="mdi-lock-outline"
-          variant="outlined"
-          @click:append-inner="getCaptcha()"
-          v-model="captcha"
-          :rules="[required]"
-        >
-        </v-text-field>
-
-        <img v-if="img" :src="img" alt="alt" />
-
-        <v-btn
-          block
-          class="mb-8"
-          color="success"
-          size="large"
-          variant="tonal"
-          :disabled="!form"
-          type="submit"
-          @click="submit($route.params.id, captcha, token)"
-        >
-          XÁC NHẬN
-        </v-btn>
-      </v-card>
-    </v-form>
     <v-card
-      class="mx-auto pa-3"
+      class="mx-auto pa-2"
       elevation="8"
       width="80%"
       max-width="440px"
       rounded="lg"
-      v-if="!view"
     >
       <v-card-title class="text-center">
-        <h3>Biểu đồ điểm của {{ $route.params.id }}</h3>
+        <h4>Biểu đồ điểm của {{ $route.params.id }}</h4>
       </v-card-title>
       <apexchart
         type="radar"
-        height="440"
+        height="400"
         :options="chartOptions"
         :series="series"
       ></apexchart>
@@ -116,14 +78,14 @@ export default {
   }),
   methods: {
     handleShare() {
-      console.log(window.location.href);
+      //console.log(window.location.href);
       navigator.clipboard.writeText(window.location.href).then(() => {
         alert(
           "Đã copy link đến trang hồ sơ của bạn, bạn có thể gửi đường link này cho bạn bè"
         );
       });
     },
-    async submit(id, capt, token) {
+    /* async submit(id, capt, token) {
       const url =
         "http://tracuudiem.thitotnghiepthpt.edu.vn:9999/service/api/v1/lookup-scores";
       const params = {
@@ -166,29 +128,47 @@ export default {
       const regex = /\d+\.\d+/g;
       let numbers = str.match(regex).map(Number);
       return numbers;
-    },
-    onSubmit() {
-      if (!this.form) return;
-    },
-    required(v) {
-      return !!v || "Nhập hộ tôi cái mã xác nhận với!!!";
-    },
-    async getCaptcha() {
+    }, */
+    async getData(id) {
+      const categories = [
+        "Toán",
+        "Văn",
+        "Anh",
+        "Lý",
+        "Hoá",
+        "Sinh",
+        "Sử",
+        "Địa",
+        "GDCD",
+      ];
       const res = await fetch(
-        "http://tracuudiem.thitotnghiepthpt.edu.vn:9999/service/api/v1/captcha"
+        `https://tienphong.vn/api/diemthi/get/result?type=0&keyword=${id}&kythi=THPT&nam=2023&cumthi=0`
       );
+
       const response = await res.json();
-      console.log(response);
-      if (response.code === 200) {
-        this.img = "data:image/png;base64, " + response.data.imageCaptcha;
-        this.token = response.data.sessionId;
-      } else {
-        this.$router.push("/");
+      //console.log(response);
+      const tdValues = response.data.results.split(/<\s*\/?\s*td\s*[^>]*>/);
+
+      console.log(response.data.results);
+      if (response.data.results == "\n") {
+        alert("Số báo danh không hợp lệ!!!!!!");
+        window.location.href = "/";
       }
+      let value = [];
+      for (let i = 3; i < 20; i = i + 2) {
+        value.push(tdValues[i]);
+      }
+      for (let i = 0; i < 9; i++) {
+        if (value[i] != "") {
+          this.series[0].data.push(value[i]);
+          this.chartOptions.xaxis.categories.push(categories[i]);
+        }
+      }
+      //console.log(value);
     },
   },
   mounted() {
-    this.getCaptcha();
+    this.getData(this.$route.params.id);
   },
 };
 </script>
