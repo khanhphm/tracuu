@@ -16,7 +16,14 @@
         :options="chartOptions"
         :series="series"
       ></apexchart>
-      <v-card-actions class="float-right">
+      <v-card-actions class="d-flex justify-space-between">
+        <p class="text-overline text-disabled">
+          Design by
+          <strong
+            >by
+            <a href="http://facebook.com/giakhanh30125">KhanhPahm</a></strong
+          >
+        </p>
         <v-btn
           icon="mdi-share"
           color="success"
