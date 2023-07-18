@@ -175,7 +175,7 @@ export default {
     },
     async getCaptcha() {
       const res = await fetch(
-        "https://tracuudiem.thitotnghiepthpt.edu.vn:9999/service/api/v1/captcha"
+        "http://tracuudiem.thitotnghiepthpt.edu.vn:9999/service/api/v1/captcha"
       );
       const response = await res.json();
       console.log(response);
