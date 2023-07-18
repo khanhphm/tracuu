@@ -11,7 +11,7 @@
       color="success"
       class="mt-12 text-center d-flex flex-column px-12"
     >
-      <div class="mt-3 mb-2 mx-12 px-12 text-justify">
+      <div class="mt-3 mb-2 text-justify">
         <strong>8:00AM 17/07/2023</strong>
 
         <p>
